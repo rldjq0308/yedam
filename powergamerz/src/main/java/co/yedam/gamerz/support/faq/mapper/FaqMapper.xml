@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="co.yedam.gamerz.support.faq.mapper.FaqMapper">
+
+<select id="faqSelectList" resultType="co.yedam.gamerz.support.faq.service.FaqVO">
+	SELECT * FROM FAQ ORDER BY FAQ_ID DESC
+</select>
+
+<select id="faqSearchtList" resultType="co.yedam.gamerz.support.faq.service.FaqVO">
+	SELECT * FROM FAQ WHERE
+	<if test="key == 'title'">FAQ_TITLE LIKE '%'||#{val}||'%'</if>
+	<if test="key == 'subject'">FAQ_SUBJECT LIKE '%'||#{val}||'%'</if>
+	<if test="key == 'writer'">FAQ_WRITER LIKE '%'||#{val}||'%'</if>
+	ORDER BY FAQ_ID DESC
+</select>
+
+<select id="faqSelect" resultType="co.yedam.gamerz.support.faq.service.FaqVO">
+	SELECT * FROM FAQ WHERE FAQ_ID = #{faqId}
+</select>
+
+<select id="faqPaging"
+	resultType="co.yedam.gamerz.support.faq.service.FaqVO">
+	<![CDATA[
+	SELECT *
+	FROM ( SELECT ROWNUM RN, V.* FROM ( SELECT * FROM FAQ ORDER BY FAQ_ID DESC ) V )
+	WHERE RN > (#{pageNum} - 1) * #{amount} AND RN <= #{pageNum} * #{amount}
+	]]> 	
+</select>
+
+<select id="faqTotalCount" resultType="int">
+	SELECT COUNT(*) AS TOTAL
+	FROM FAQ
+</select>
+
+<insert id="faqInsert" parameterType="co.yedam.gamerz.support.faq.service.FaqVO">
+	<selectKey resultType="int" keyProperty="faqId" order="BEFORE">
+		SELECT CASE WHEN MAX(FAQ_ID) IS NULL THEN 1
+         	   ELSE MAX(FAQ_ID) + 1 END  AS faqId FROM FAQ
+	</selectKey>
+
+	INSERT INTO FAQ(FAQ_ID,FAQ_TITLE, FAQ_SUBJECT,FAQ_WRITER,FAQ_WRITER_ID)
+	VALUES(#{faqId},#{faqTitle},#{faqSubject},#{faqWriter},#{faqWriterId})
+</insert>
+
+<update id="faqUpdate" parameterType="co.yedam.gamerz.support.faq.service.FaqVO">
+	UPDATE FAQ
+	<set>
+		<if test="faqTitle != null">FAQ_TITLE = #{faqTitle},</if>	
+		<if test="faqSubject != null">FAQ_SUBJECT = #{faqSubject},</if>
+		<if test="faqDate != null">FAQ_DATE = #{faqDate},</if>
+		<if test="faqReq != null">FAQ_REQ = #{faqReq},</if>
+	</set>
+	WHERE FAQ_ID = #{faqId}
+</update>
+
+<delete id="faqDelete" parameterType="co.yedam.gamerz.support.faq.service.FaqVO">
+	DELETE FAQ WHERE FAQ_ID = #{faqId}
+</delete>
+
+</mapper>

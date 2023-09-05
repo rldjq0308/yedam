@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="co.yedam.gamerz.review.mapper.ReviewMapper">
+	<select id="reviewSelectList"
+		resultType="co.yedam.gamerz.common.CamelHashMap">
+		SELECT R.*, M.*
+		FROM REVIEW R , MEMBER M
+		WHERE
+		REVIEW_WRITER = MEMBER_NAME
+	</select>
+
+	<select id="reviewSelect"
+		resultType="co.yedam.gamerz.review.service.ReviewVO">
+		SELECT * FROM REVIEW WHERE REVIEW_ID = #{reviewId}
+	</select>
+
+	<insert id="reviewInsert"
+		parameterType="co.yedam.gamerz.review.service.ReviewVO">
+		<selectKey resultType="int" keyProperty="reviewId"
+			order="BEFORE">
+			SELECT CASE WHEN MAX(REVIEW_ID) IS NULL THEN 1
+			ELSE
+			MAX(REVIEW_ID) + 1 END AS REVIEWID FROM REVIEW
+		</selectKey>
+
+		INSERT INTO REVIEW(REVIEW_ID, REVIEW_LOCATION, REVIEW_WRITER,
+		REVIEW_COMMENT)
+		VALUES(#{reviewId}, #{reviewLocation},
+		#{reviewWriter}, #{reviewComment})
+	</insert>
+
+	<update id="reviewUpdate">
+		UPDATE REVIEW
+		<set>
+			<if test="reviewDate != null"> REVIEW_DATE = #{reviewDate},</if>
+			<if test="reviewComment != null"> REVIEW_COMMENT = #{reviewComment}</if>
+		</set>
+		WHERE REVIEW_ID = #{reviewId}
+	</update>
+
+	<delete id="reviewDelete"
+		parameterType="co.yedam.gamerz.review.service.ReviewVO">
+		DELETE FROM REVIEW WHERE REVIEW_ID = #{reviewId}
+	</delete>
+</mapper>

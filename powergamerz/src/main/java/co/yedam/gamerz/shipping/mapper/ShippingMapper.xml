@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="co.yedam.gamerz.shipping.mapper.ShippingMapper">
+
+	<select id="shippingAList"
+		resultType="co.yedam.gamerz.common.CamelHashMap">
+		SELECT S.*, T.*, V.*, M.*
+		FROM SHIPPING S, CART T,
+		VIDEOGAMES V, MEMBER M
+		WHERE
+		CHASE_NAME = MEMBER_NAME
+		AND
+		CHASE_ID =
+		GAME_ID
+		AND
+		CHASE_PRICE = CART_TOTAL
+	</select>
+
+	<select id="shippingList"
+		resultType="co.yedam.gamerz.shipping.service.ShippingVO">
+		SELECT * FROM SHIPPING
+	</select>
+
+	<insert id="shippingInsert"
+		parameterType="co.yedam.gamerz.shipping.service.ShippingVO">
+		INSERT INTO SHIPPING VALUES(#{chaseName}, #{chaseId},
+		#{chasePrice})
+	</insert>
+
+	<delete id="shippingDelete"
+		parameterType="co.yedam.gamerz.shipping.service.ShippingVO">
+	</delete>
+
+	<update id="shippingUpdate"
+		parameterType="co.yedam.gamerz.shipping.service.ShippingVO">
+	</update>
+</mapper>
