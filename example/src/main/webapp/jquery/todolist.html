@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+<style>
+body {
+  margin: 0;
+  min-width: 250px;
+}
+
+/* Include the padding and border in an element's total width and height */
+* {
+  box-sizing: border-box;
+}
+
+/* Remove margins and padding from the list */
+ul {
+  margin: 0;
+  padding: 0;
+}
+
+/* Style the list items */
+ul li {
+  cursor: pointer;
+  position: relative;
+  padding: 12px 8px 12px 40px;
+  list-style-type: none;
+  background: #eee;
+  font-size: 18px;
+  transition: 0.2s;
+  
+  /* make the list items unselectable */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Set all odd list items to a different color (zebra-stripes) */
+ul li:nth-child(odd) {
+  background: #f9f9f9;
+}
+
+/* Darker background-color on hover */
+ul li:hover {
+  background: #ddd;
+}
+
+/* When clicked on, add a background color and strike out text */
+ul li.checked {
+  background: #888;
+  color: #fff;
+  text-decoration: line-through;
+}
+
+/* Add a "checked" mark when clicked on */
+ul li.checked::before {
+  content: '';
+  position: absolute;
+  border-color: #fff;
+  border-style: solid;
+  border-width: 0 2px 2px 0;
+  top: 10px;
+  left: 16px;
+  transform: rotate(45deg);
+  height: 15px;
+  width: 7px;
+}
+
+/* Style the close button */
+.close {
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 12px 16px 12px 16px;
+}
+
+.close:hover {
+  background-color: #f44336;
+  color: white;
+}
+
+/* Style the header */
+.header {
+  background-color: #f44336;
+  padding: 30px 40px;
+  color: white;
+  text-align: center;
+}
+
+/* Clear floats after the header */
+.header:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Style the input */
+input {
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  width: 35%;
+  padding: 10px;
+  float: left;
+  font-size: 16px;
+}
+
+/* Style the "Add" button */
+.addBtn {
+  padding: 10px;
+  width: 25%;
+  background: #d9d9d9;
+  color: #555;
+  float: left;
+  text-align: center;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+  border-radius: 0;
+}
+
+.addBtn:hover {
+  background-color: #bbb;
+}
+</style>
+</head>
+<body>
+
+<div id="myDIV" class="header">
+  <h2 style="margin:5px">My To Do List</h2>
+  <input type="text" id="myInput" placeholder="Title...">
+  <input type="text" id="myDue" placeholder="Due date...">
+  <span onclick="newElement()" class="addBtn">Add</span>
+</div>
+
+<ul id="myUL">
+</ul>
+
+<script>
+//초기 화면 생성
+$(document).ready(function(){
+	$.ajax({
+		type:"post",
+		url: "../AjaxTodoList",
+		contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+		success: function(data){
+			for(let i =0; i < data.length; i++){
+				 $('#myUL').append(
+				 $('<li>').prop({
+					  innerText: data[i].todo + " (Due" + data[i].dueDate + ")"
+					  }).attr("data-lno",data[i].listNo).append(
+						  $('<span>').prop({
+							  className: "close",
+							  innerText: "\u00D7"
+							  })
+					  )	  
+			  );		
+			  
+			  if(data[i].complete == "true"){
+					  $('li[data-lno='+data[i].listNo+']').attr('class','checked');
+				  }			  	
+			}			
+		}
+	})	
+})
+
+// Click on a close button to hide the current list item
+$(document).on("click",'.close',function() {
+		$.ajax({
+		type:"post",
+		url: "../AjaxTodoDel",
+		data: {listNo: $(this).parent().data('lno')},
+		contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+		success: function(data){
+			console.log($(this).parent());	
+		}
+	})
+	$(this).parent().css('display','none');
+});
+
+
+// Add a "checked" symbol when clicking on a list item
+$(document).on('click','li',function(){
+	
+	$(this).toggleClass('checked');
+	
+	$.ajax({
+		type:"post",
+		url: "../AjaxTodoEdit",
+		data: {listNo: $(this).data('lno'), complete: $(this).hasClass('checked')},
+		contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+		success: function(data){	
+		}
+	})
+});
+
+// Create a new list item when clicking on the "Add" button
+function newElement() {
+  var inputValue = $('#myInput')[0].value;
+  var dueDate = $('#myDue')[0].value;
+  if (inputValue === '') {
+    alert("You must write something!");
+  } else {
+	  $.ajax({
+		type:"post",
+		url: "../AjaxTodoAdd",
+		contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+		data:{todo: inputValue, dueDate: dueDate},
+		success: function(data){
+			console.log(data);
+			
+			  $('#myUL').append(
+				  $('<li>').prop({
+					  innerText: data.result.todo + " (Due" + data.result.dueDate+")"
+					  }).attr("data-lno",data.result.listNo).append(
+						  $('<span>').prop({
+							  className: "close",
+							  innerText: "\u00D7"
+							  })
+					  )
+			  );		
+			}
+		})
+  }
+  $('#myInput')[0].value = "";
+  $('#myDue')[0].value = "";
+}
+
+document.querySelector('#myInput').addEventListener('keyup', (e)=>{
+    if (e.keyCode === 13) {	
+		newElement();
+        // code for enter
+  }  
+});
+
+document.querySelector('#myDue').addEventListener('keyup', (e)=>{
+    if (e.keyCode === 13) {
+		
+		if($('#myInput').val == ''){
+			return;
+		}
+			
+		newElement();
+        // code for enter
+  }  
+});
+
+</script>
+
+</body>
+</html>

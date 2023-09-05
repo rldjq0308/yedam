@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="co.micol.example.member.mapper.MemberMapper">
+	<select id="memberSelectList" resultType="co.micol.example.member.service.MemberVO">
+		SELECT * FROM MEMBER
+	</select>
+	<select id="memberSelect" resultType="co.micol.example.member.service.MemberVO">
+		SELECT * FROM MEMBER WHERE MEMBER_ID = #{memberId}
+		<if test="memberPassword != null">
+			AND MEMBER_PASSWORD = #{memberPassword}
+		</if>
+	</select>
+	<insert id="memberInsert" parameterType="co.micol.example.member.service.MemberVO">
+		INSERT INTO MEMBER(MEMBER_ID, MEMBER_PASSWORD, MEMBER_NAME, MEMBER_IMG, MEMBER_TEL, MEMBER_ADDRESS)
+		VALUES(#{memberId},#{memberPassword},#{memberName},#{memberImg},#{memberTel},#{memberAddress})
+		
+	</insert>
+	<update id="memberUpdate" parameterType="co.micol.example.member.service.MemberVO">
+		UPDATE MEMBER
+		<set>
+			<if test="memberPassword != null">member_password = #{memberPassword},</if>
+			<if test="memberName != null">member_name = #{memberName},</if>
+			<if test="memberImg != null">member_img = #{memberImg},</if>
+			<if test="memberTel != null">member_tel = #{memberTel},</if>
+			<if test="memberAddress != null">member_address = #{memberAddress},</if>
+			<if test="memberEdate != null">member_edate = #{memberEdate},</if>
+			<if test="memberSdate != null>">member_sdate = #{memberSdate},</if>
+			<if test="memberAuthor != null">member_author = #{memberAuthor}</if>
+		</set>
+		WHERE MEMBER_ID = #{memberId}
+	</update>
+	<delete id="memberDelete" parameterType="co.micol.example.member.service.MemberVO">
+		DELETE FROM MEMBER WHERE MEMBER_ID = #{memberId}
+	</delete>
+</mapper>

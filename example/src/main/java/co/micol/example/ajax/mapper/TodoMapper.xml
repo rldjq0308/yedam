@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="co.micol.example.ajax.mapper.TodoMapper">
+
+<select id="list" resultType="co.micol.example.ajax.service.TodoVO">
+	SELECT * FROM TODOLIST
+</select>
+
+<insert id="insert" parameterType="co.micol.example.ajax.service.TodoVO">
+	 <selectKey resultType="int" keyProperty="listNo" order="BEFORE">
+	 	SELECT CASE WHEN MAX(LIST_NO) IS NULL THEN 1
+	 				ELSE MAX(LIST_NO) + 1 END AS listNo FROM TODOLIST 
+	 </selectKey>
+	 
+	 INSERT INTO TODOLIST 
+	 VALUES(#{listNo},#{todo},#{dueDate},'N')
+</insert>
+
+<update id="update" parameterType="co.micol.example.ajax.service.TodoVO">
+	UPDATE TODOLIST
+	<set>
+		<if test="todo != null">TODO = #{todo},</if>
+		<if test="dueDate != null">DUE_DATE = #{dueDate},</if>
+		<if test="complete != null">COMPLETE = #{complete},</if>
+	</set>
+	WHERE LIST_NO = #{listNo}
+</update>
+
+<delete id="delete" parameterType="int">
+	DELETE TODOLIST WHERE LIST_NO = #{listNo}
+</delete>
+
+</mapper>
