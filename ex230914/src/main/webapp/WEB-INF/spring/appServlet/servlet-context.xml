@@ -10,10 +10,10 @@
 	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
 	
 	<!-- Enables the Spring MVC @Controller programming model -->
-	<annotation-driven />
+	<annotation-driven /> <!--그냥 놔두면된다 -->
 
 	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
-	<resources mapping="/resources/**" location="/resources/" />
+	<resources mapping="/resources/**" location="/resources/" /> <!-- 컨트롤러를 거치지 않고 접근하는 파일 경로 설정함 -->
 
 	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
 	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -21,7 +21,10 @@
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
 	
-	<context:component-scan base-package="com.yedam.test" />
+	<!-- bean을 읽어들임 -->
+	<context:component-scan base-package="com.yedam.test" > <!-- 모든 컴포넌트 어노테이션을 읽어들임 -->
+		<context:include-filter type="annotation" expression="Controller"/> <!-- root-context의 스캐너와 충돌을 방지하기 위해 사용 -->
+	</context:component-scan> 
 	
 	
 	
