@@ -55,11 +55,35 @@
 	</form>
 	
 	<script type="text/javascript">
-		$('from:eq(1)').on('submit',function(e){
+		$('form:eq(1)').on('submit',function(e){
 			e.preventDefault();
 			
-			let formData = $('from:eq(1)').serializeArray();
+			//let formData = new FormData(document.getElementsByTagName('form')[1]);
+			let formData = $('form:eq(1)').serializeArray();
+			// serialize() : QueryString - key=value&key=value&...
+			// serializeArray() : [ { name : '' , value: ''  },]
+			//->{ lastName : 'King', }
+			formData = $('table input');
 			
+			let formobj = {};
+			$.each(formData, function(idx, obj){
+				//하나의 객체 => 하나의 필드
+				formobj[obj.name] = obj.value;
+			});
+			
+			console.log(formData, formobj);
+			
+			$.ajax('empInfoInsert',{
+				type: 'post',
+				contentType: 'application/json', 
+				data: JSON.stringify(formobj)
+			})
+			.done(data=>{
+				console.log(data);
+			})
+			.fail(reject => console.log(reject));
+			
+			$('form:eq(1)').submit();
 			
 			//return false;
 		});
@@ -70,8 +94,8 @@
 			2) stopPropagation(): 이벤트 버블링을 막음.
 			
 			-필드
-			1) target
-			2) currentTarget
+			1) target: 이벤트가 발생한 태그 (고정값)
+			2) currentTarget: 현재 이벤트 핸들러가 동작하는 태그 (변동값) => this
 		*/
 	</script>
 </body>
