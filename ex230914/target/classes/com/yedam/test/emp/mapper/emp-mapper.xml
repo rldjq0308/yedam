@@ -108,7 +108,7 @@
 		UPDATE employees
 		<set>
 			<if test="firstName != null and !firstName.equals('')">
-				fist_name = #{firstName},
+				first_name = #{firstName},
 			</if>
 			<if test="email != null and !email.equals('')">
 				email = #{email},

@@ -1,5 +1,7 @@
 package com.yedam.test.emp.web;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -77,7 +80,20 @@ public class EmpMngController {
 		return empService.updateEmp(empvo); 
 	}
 	
-	// 삭제 - 단건삭제
+	// 삭제 - 단건삭제 : ajax
+	@GetMapping("empDelete")
+	@ResponseBody
+	public Map<String, Object> empInfoDelete(@RequestParam Integer employeeId){
+		List<Integer> list = new ArrayList<>();
+		list.add(employeeId);
+		return empService.deleteEmp(list);
+	}
 	
-	// 삭제 - 선택삭제
+	// 삭제 - 선택삭제 : ajax
+	@PostMapping("empDelete")
+	@ResponseBody
+	public boolean empListDelete(@RequestBody List<Integer> empList){
+		Map<String, Object> result = empService.deleteEmp(empList);
+		return (boolean)result.get("result");
+	}
 }
