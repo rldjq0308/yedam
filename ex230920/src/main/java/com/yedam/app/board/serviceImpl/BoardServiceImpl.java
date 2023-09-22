@@ -17,8 +17,7 @@ public class BoardServiceImpl implements BoardService {
 
 	@Override
 	public List<BoardVO> getBoardList() {
-		List<BoardVO> findList = boardMapper.selectBoardList();
-		return findList;
+		return boardMapper.selectBoardList();
 	}
 
 	@Override
@@ -31,7 +30,7 @@ public class BoardServiceImpl implements BoardService {
 		int result = boardMapper.insertBoard(boardVO);
 
 		if (result == 1) {
-			return Integer.parseInt(boardVO.getBno());
+			return Integer.valueOf(boardVO.getBno());
 		} else {
 			return -1;
 		}
@@ -42,7 +41,7 @@ public class BoardServiceImpl implements BoardService {
 		int result = boardMapper.updateBoard(boardVO);
 
 		if (result == 1) {
-			return Integer.parseInt(boardVO.getBno());
+			return Integer.valueOf(boardVO.getBno());
 		} else {
 			return -1;
 		}
