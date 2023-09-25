@@ -1,0 +1,23 @@
+CREATE TABLE tbl_temp
+(
+    temp_no             VARCHAR2(20 char) PRIMARY KEY,
+    temp_content      VARCHAR2(4000)    default 'no content'  
+);
+
+SELECT * FROM tbl_temp ORDER BY temp_no; 
+
+SELECT 'ORT' || SUBSTR(TO_CHAR(SYSDATE,'YY')) || TO_CHAR(SYSDATE,'MM') 
+FROM DUAL;
+
+INSERT INTO tbl_temp(temp_no) VALUES('ORT2309001');
+INSERT INTO tbl_temp(temp_no) VALUES('ORT2309002');
+INSERT INTO tbl_temp(temp_no) VALUES('ORT2308001');
+INSERT INTO tbl_temp(temp_no) VALUES('ORT2310004');
+
+--'ORT' || '년월' || 3자리 넘버링
+
+SELECT 'ORT' 
+            || TO_CHAR(sysdate,'yyMM') 
+            || LPAD((NVL(MAX(TO_NUMBER(SUBSTR(temp_no,-3))),0)+1),3,'0') 
+FROM tbl_temp
+WHERE SUBSTR(temp_no,4,4) = TO_CHAR(sysdate,'yyMM');

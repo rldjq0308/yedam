@@ -1,0 +1,15 @@
+--페이징 쿼리문
+SELECT *
+FROM (SELECT ROWNUM rn, e.*
+          FROM(SELECT *
+                    FROM employees
+                    ORDER BY salary ASC)e)
+WHERE rn BETWEEN 1 AND 10;
+
+DELETE FROM employees
+WHERE employee_id IN (SELECT employee_id
+                                    FROM (SELECT ROWNUM rn, e.*
+                                              FROM(SELECT *
+                                                        FROM employees
+                                                        ORDER BY salary ASC)e)
+                                    WHERE rn BETWEEN 1 AND 10);
